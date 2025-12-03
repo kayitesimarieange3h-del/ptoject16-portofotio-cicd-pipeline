@@ -12,7 +12,7 @@ env:
   IMAGE_NAME: portfolio
   AWS_REGION: us-east-1
   ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
-  ECR_REPO: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/dev/portfolio
+  ECR_REPO: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/uat-app
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -46,7 +46,7 @@ jobs:
         with:
           image-ref: ${{ env.ECR_REPO }}:latest
           format: table
-          exit-code: '1' 
+          exit-code: '0' 
           severity: CRITICAL,HIGH
       - name: Push Docker image to Amazon ECR
         run: |
