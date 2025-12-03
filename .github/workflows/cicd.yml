@@ -33,5 +33,4 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Build image
         run: docker build -t kayitesimarieange3h-del/ptoject16-portofotio-cicd-pipeline .
-      - name: check credencials
-        run: AWS S3
+      
