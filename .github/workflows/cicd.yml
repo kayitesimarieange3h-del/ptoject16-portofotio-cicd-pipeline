@@ -1,19 +1,18 @@
-name: utc app ci/cd
+name: Utc App ci/cd
 on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "main"]
+    branches: [ "main" ]
 permissions:
-  id-token: write          # Required for OIDC
-  contents: read
-
-env: 
-  Python_version: 3.11
+      id-token: write
+      contents: read
+env:
+  python_version: 3.11
   IMAGE_NAME: portfolio
   AWS_REGION: us-east-1
-  ACCOUNT_ID: ${{ secrets.ACCOUNT_ID}}
-  ECR_REPO: uat-app  
+  ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+  ECR_REPO: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/dev/portfolio
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,7 +20,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-            python-version: ${{env.python_version}}  # or $python_version
+            python-version: ${{env.python_version}}
+# or $python_version
       - name: Install pytest
         run: pip install -r requirements.txt
       - name: unit test
@@ -29,36 +29,25 @@ jobs:
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{secrets.AWS_ROLE_ARN}}
+          role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-      - name: Build image
-        run: docker build -t kayitesimarieange3h-del/ptoject16-portofotio-cicd-pipeline .
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-
-      # 4. Build Docker image
       - name: Build Docker image
         run: |
-            IMAGE_URI=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:latest
-            docker build -t $IMAGE_URI .
-            echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
-
-      # 5. Tag Docker image for ECR
+          docker build -t ${{ env.IMAGE_NAME }} .
       - name: Tag Docker image
         run: |
           docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.ECR_REPO }}:latest
-
-      # 6. Scan Docker image with Trivy
+         
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.ECR_REPO }}:latest
           format: table
-          exit-code: '1' # fail workflow on critical/high vulnerabilities
+          exit-code: '1' 
           severity: CRITICAL,HIGH
-
-      # 7. Push Docker image to ECR
       - name: Push Docker image to Amazon ECR
         run: |
           docker push ${{ env.ECR_REPO }}:latest
