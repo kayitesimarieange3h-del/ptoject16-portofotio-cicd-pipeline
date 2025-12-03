@@ -13,7 +13,7 @@ env:
   IMAGE_NAME: portfolio
   AWS_REGION: us-east-1
   ACCOUNT_ID: ${{ secrets.ACCOUNT_ID}}
-  ECR_REPO: ${{ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME}}  
+  ECR_REPO: uat-app  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -53,7 +53,7 @@ jobs:
         with:
           image-ref: ${{ env.ECR_REPO }}:latest
           format: table
-          exit-code: '0' # fail workflow on critical/high vulnerabilities
+          exit-code: '1' # fail workflow on critical/high vulnerabilities
           severity: CRITICAL,HIGH
 
       # 7. Push Docker image to ECR
