@@ -1,14 +1,19 @@
-name: Utc App ci/cd
-
+name: utc app ci/cd
 on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main"]
+permissions:
+  id-token: write          # Required for OIDC
+  contents: read
 
-env:
-  python_version: 3.11
-
+env: 
+  Python_version: 3.11
+  IMAGE_NAME: portfolio
+  AWS_REGION: us-east-1
+  ACCOUNT_ID: ${{ secrets.ACCOUNT_ID}}
+  ECR_REPO: $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,5 +26,12 @@ jobs:
         run: pip install -r requirements.txt
       - name: unit test
         run: pytest test.py
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{secrets.AWS_ROLE_ARN}}
+          aws-region: ${{ env.AWS_REGION }}
       - name: Build image
-        run: docker build -t kserge2001/portcicd .
+        run: docker build -t kayitesimarieange3h-del/ptoject16-portofotio-cicd-pipeline .
+      - name: check credencials
+        run: AWS S3
