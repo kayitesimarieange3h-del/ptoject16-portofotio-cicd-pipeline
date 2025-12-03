@@ -40,7 +40,9 @@ jobs:
       # 4. Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t ${{ env.IMAGE_NAME }} .
+            IMAGE_URI=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:latest
+            docker build -t $IMAGE_URI .
+            echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
       # 5. Tag Docker image for ECR
       - name: Tag Docker image
