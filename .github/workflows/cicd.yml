@@ -13,7 +13,7 @@ env:
   IMAGE_NAME: portfolio
   AWS_REGION: us-east-1
   ACCOUNT_ID: ${{ secrets.ACCOUNT_ID}}
-  ECR_REPO: $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME  
+  ECR_REPO: ${{ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME}}  
 jobs:
   build:
     runs-on: ubuntu-latest
